@@ -7,7 +7,7 @@
   "questions": [
     {
       "id": "1",
-      "question_type": "Radioboxes",
+      "question_type": "LinearScale",
       "question_title": "What were you hoping the XYZ mobile app would do?",
       "description": "(Select all that apply)",
       "required": false,
@@ -15,20 +15,20 @@
       "choices": [
         {
           "id":"11",
-          "value":"thing #1",
+          "value":"1",
           "goTo":"5"
         },
         {
           "id":"12",
-          "value":"thing #2"
+          "value":"2"
         },
         {
           "id":"13",
-          "value":"thing #3"
+          "value":"3"
         },
         {
           "id":"14",
-          "value":"thing #4"
+          "value":"4"
         }
       ]
     },

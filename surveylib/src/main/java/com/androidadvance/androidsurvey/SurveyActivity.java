@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 
 import com.androidadvance.androidsurvey.fragment.FragmentCheckboxes;
 import com.androidadvance.androidsurvey.fragment.FragmentEnd;
+import com.androidadvance.androidsurvey.fragment.FragmentLinearScale;
 import com.androidadvance.androidsurvey.fragment.FragmentMultiline;
 import com.androidadvance.androidsurvey.fragment.FragmentNumber;
 import com.androidadvance.androidsurvey.fragment.FragmentRadioboxes;
@@ -88,6 +89,15 @@ public class SurveyActivity extends AppCompatActivity {
 
             if (mQuestion.getQuestionType().equals("Radioboxes")) {
                 FragmentRadioboxes frag = new FragmentRadioboxes();
+                Bundle xBundle = new Bundle();
+                xBundle.putSerializable("data", mQuestion);
+                xBundle.putString("style", style_string);
+                frag.setArguments(xBundle);
+                arraylist_fragments.add(frag);
+            }
+
+            if (mQuestion.getQuestionType().equals("LinearScale")) {
+                FragmentLinearScale frag = new FragmentLinearScale();
                 Bundle xBundle = new Bundle();
                 xBundle.putSerializable("data", mQuestion);
                 xBundle.putString("style", style_string);
