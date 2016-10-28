@@ -1,24 +1,20 @@
 package com.androidadvance.androidsurvey.fragment;
 
 import android.app.DatePickerDialog;
-import android.app.Service;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
 import android.text.Html;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.androidadvance.androidsurvey.Answers;
@@ -34,8 +30,7 @@ import java.util.Date;
  * Created by Hein Htet on 10/28/2016.
  */
 
-public class FragmentDate extends Fragment implements DatePickerDialog.OnDateSetListener {
-
+public class FragmentTime extends Fragment implements TimePickerDialog.OnTimeSetListener {
     private FragmentActivity mContext;
     private Button button_continue;
     private TextView textview_q_title;
@@ -111,7 +106,7 @@ public class FragmentDate extends Fragment implements DatePickerDialog.OnDateSet
         }else{
             try {
                 String selected_Date = editText_answer.getText().toString();
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
                 Date date = formatter.parse(selected_Date);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
@@ -124,17 +119,12 @@ public class FragmentDate extends Fragment implements DatePickerDialog.OnDateSet
     }
 
     private void showDefaultDatePickerDialog(Calendar calendar){
-        new DatePickerDialog(mContext, this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+        new TimePickerDialog(mContext, this, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show();
     }
 
     @Override
-    public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+    public void onTimeSet(TimePicker timePicker, int hrOfDay, int min) {
         button_continue.setVisibility(View.VISIBLE);
-        String monthString = monthOfYear > 9 ? (monthOfYear+"") : ("0"+monthOfYear);
-        String dayString = dayOfMonth > 9 ? (dayOfMonth+"") : ("0"+dayOfMonth);
-        Log.i("Selected Date", year + " - " + monthOfYear + " - " + dayOfMonth);
-        editText_answer.setText(dayString + "-" + monthString + "-" + year);
+        editText_answer.setText(hrOfDay + ":" + min);
     }
-
-
 }

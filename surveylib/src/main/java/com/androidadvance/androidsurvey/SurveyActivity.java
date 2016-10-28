@@ -19,6 +19,7 @@ import com.androidadvance.androidsurvey.fragment.FragmentNumber;
 import com.androidadvance.androidsurvey.fragment.FragmentRadioboxes;
 import com.androidadvance.androidsurvey.fragment.FragmentStart;
 import com.androidadvance.androidsurvey.fragment.FragmentTextSimple;
+import com.androidadvance.androidsurvey.fragment.FragmentTime;
 import com.androidadvance.androidsurvey.models.Question;
 import com.androidadvance.androidsurvey.models.SurveyPojo;
 import com.google.gson.Gson;
@@ -117,6 +118,15 @@ public class SurveyActivity extends AppCompatActivity {
 
             if (mQuestion.getQuestionType().equals("Date")) {
                 FragmentDate frag = new FragmentDate();
+                Bundle xBundle = new Bundle();
+                xBundle.putSerializable("data", mQuestion);
+                xBundle.putString("style", style_string);
+                frag.setArguments(xBundle);
+                arraylist_fragments.add(frag);
+            }
+
+            if (mQuestion.getQuestionType().equals("Time")) {
+                FragmentTime frag = new FragmentTime();
                 Bundle xBundle = new Bundle();
                 xBundle.putSerializable("data", mQuestion);
                 xBundle.putString("style", style_string);
