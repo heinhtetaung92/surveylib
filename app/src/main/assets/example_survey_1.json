@@ -6,43 +6,70 @@
   },
   "questions": [
     {
-      "question_type": "Checkboxes",
+      "id": "1",
+      "question_type": "Radioboxes",
       "question_title": "What were you hoping the XYZ mobile app would do?",
       "description": "(Select all that apply)",
       "required": false,
       "random_choices": false,
       "choices": [
-        "thing #1",
-        "thing #2",
-        "thing #3",
-        "thing #4"
+        {
+          "id":"11",
+          "value":"thing #1",
+          "goTo":"5"
+        },
+        {
+          "id":"12",
+          "value":"thing #2"
+        },
+        {
+          "id":"13",
+          "value":"thing #3"
+        },
+        {
+          "id":"14",
+          "value":"thing #4"
+        }
       ]
     },
     {
+      "id": "2",
       "question_type": "Checkboxes",
       "question_title": "Do you currently use one of these other software solutions?",
       "description": "",
       "required": false,
-      "random_choices": true,
+      "random_choices": false,
       "choices": [
-        "<font color='#AA0000'>Yes, I use a <strong>red</strong> product</font>",
-        "I use a <font color='#00AA00'>green product</font>",
-        "I partialy use a <font color='#0000AA'><strong>blue</strong></font> product"
+        {
+          "id":"15",
+          "value":"<font color='#AA0000'>Yes, I use a <strong>red</strong> product</font>"
+        },
+        {
+          "id":"16",
+          "value":"I use a <font color='#00AA00'>green product</font>"
+        },
+        {
+          "id":"17",
+          "value":"I partialy use a <font color='#0000AA'><strong>blue</strong></font> product"
+        }
       ]
     },
     {
+      "id": "3",
       "question_type": "String",
       "question_title": "Why did you not subscribe at the end of your free trial ?",
       "description": "",
       "required": false
     },
     {
+      "id": "4",
       "question_title": "If this app was paid, how much you would give to have it ?",
       "description": "",
       "required": false,
       "question_type": "Number"
     },
     {
+      "id": "5",
       "question_type": "StringMultiline",
       "question_title": "We love feedback and if there is anything else you’d like us to improve please let us know.",
       "description": "",

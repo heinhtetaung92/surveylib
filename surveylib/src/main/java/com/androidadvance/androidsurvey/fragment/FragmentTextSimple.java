@@ -26,6 +26,7 @@ public class FragmentTextSimple extends Fragment {
     private Button button_continue;
     private TextView textview_q_title;
     private EditText editText_answer;
+    Question q_data;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,7 +40,7 @@ public class FragmentTextSimple extends Fragment {
         button_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Answers.getInstance().put_answer(textview_q_title.getText().toString(), editText_answer.getText().toString().trim());
+                Answers.getInstance().put_answer(q_data.getId(), editText_answer.getText().toString().trim());
                 ((SurveyActivity) mContext).go_to_next();
             }
         });
@@ -54,7 +55,8 @@ public class FragmentTextSimple extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mContext = getActivity();
-        Question q_data = (Question) getArguments().getSerializable("data");
+        q_data = (Question) getArguments().getSerializable("data");
+        String answer = Answers.getInstance().get_answer(q_data.getId(), "");
 
         if (q_data.getRequired()) {
             button_continue.setVisibility(View.GONE);
@@ -80,6 +82,7 @@ public class FragmentTextSimple extends Fragment {
 
         textview_q_title.setText(Html.fromHtml(q_data.getQuestionTitle()));
         editText_answer.requestFocus();
+        editText_answer.setText(answer);
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.showSoftInput(editText_answer, 0);
 

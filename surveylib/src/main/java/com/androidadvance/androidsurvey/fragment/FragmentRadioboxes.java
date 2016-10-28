@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.androidadvance.androidsurvey.Answers;
 import com.androidadvance.androidsurvey.R;
 import com.androidadvance.androidsurvey.SurveyActivity;
+import com.androidadvance.androidsurvey.models.Choice;
 import com.androidadvance.androidsurvey.models.Question;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class FragmentRadioboxes extends Fragment {
     private RadioGroup radioGroup;
     private final ArrayList<RadioButton> allRb = new ArrayList<>();
     private boolean at_leaset_one_checked = false;
-
+    private String nextObjId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,7 +48,7 @@ public class FragmentRadioboxes extends Fragment {
         button_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SurveyActivity) mContext).go_to_next();
+                ((SurveyActivity) mContext).go_to_next(nextObjId);
             }
         });
 
@@ -62,12 +63,13 @@ public class FragmentRadioboxes extends Fragment {
         for (RadioButton rb : allRb) {
             if (rb.isChecked()) {
                 at_leaset_one_checked = true;
-                the_choice = rb.getText().toString();
+                the_choice = (String) rb.getTag(R.string.objId);
+                nextObjId = (String) rb.getTag(R.string.nextObjId);
             }
         }
 
         if (the_choice.length() > 0) {
-            Answers.getInstance().put_answer(textview_q_title.getText().toString(), the_choice);
+            Answers.getInstance().put_answer(q_data.getId(), the_choice);
         }
 
 
@@ -92,17 +94,24 @@ public class FragmentRadioboxes extends Fragment {
 
         textview_q_title.setText(q_data.getQuestionTitle());
 
+        String answer = Answers.getInstance().get_answer(q_data.getId(), "");
 
-        List<String> qq_data = q_data.getChoices();
+        List<Choice> qq_data = q_data.getChoices();
         if (q_data.getRandomChoices()) {
             Collections.shuffle(qq_data);
         }
 
-        for (String choice : qq_data) {
+        allRb.clear();
+        radioGroup.removeAllViews();
+        radioGroup.clearCheck();
+        for (Choice choice : qq_data) {
             RadioButton rb = new RadioButton(mContext);
-            rb.setText(Html.fromHtml(choice));
+            rb.setText(Html.fromHtml(choice.getValue() == null ? "" : choice.getValue()));
             rb.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
             rb.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            rb.setTag(R.string.objId, choice.getId());
+            rb.setTag(R.string.nextObjId, choice.getGoTo());
             radioGroup.addView(rb);
             allRb.add(rb);
 
@@ -112,6 +121,14 @@ public class FragmentRadioboxes extends Fragment {
                     collect_data();
                 }
             });
+        }
+
+        for(RadioButton rb : allRb) {
+            if (answer.equals(rb.getTag(R.string.objId))) {
+                rb.setChecked(true);
+            } else {
+                rb.setChecked(false);
+            }
         }
 
         if (q_data.getRequired()) {

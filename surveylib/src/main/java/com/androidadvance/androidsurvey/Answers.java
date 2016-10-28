@@ -19,6 +19,10 @@ public class Answers {
         answered_hashmap.put(key, value);
     }
 
+    public String get_answer(String key, String defVal){
+        return answered_hashmap.get(key) == null ? defVal : answered_hashmap.get(key);
+    }
+
     public String get_json_object() {
         Gson gson = new Gson();
         return gson.toJson(answered_hashmap,LinkedHashMap.class);
@@ -26,7 +30,7 @@ public class Answers {
 
     @Override
     public String toString() {
-        return String.valueOf(answered_hashmap);
+        return String.valueOf( answered_hashmap);
     }
 
     public static Answers getInstance() {

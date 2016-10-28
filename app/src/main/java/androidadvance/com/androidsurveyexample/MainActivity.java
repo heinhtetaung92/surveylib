@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        button_survey_example_2.setOnClickListener(new View.OnClickListener() {
+        /*button_survey_example_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i_survey = new Intent(MainActivity.this, SurveyActivity.class);
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 i_survey.putExtra("json_survey", loadSurveyJson("example_survey_3.json"));
                 startActivityForResult(i_survey, SURVEY_REQUEST);
             }
-        });
+        });*/
 
     }
 

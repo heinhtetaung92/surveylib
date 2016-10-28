@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,11 @@ import android.widget.TextView;
 import com.androidadvance.androidsurvey.Answers;
 import com.androidadvance.androidsurvey.R;
 import com.androidadvance.androidsurvey.SurveyActivity;
+import com.androidadvance.androidsurvey.models.Choice;
 import com.androidadvance.androidsurvey.models.Question;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +47,7 @@ public class FragmentCheckboxes extends Fragment {
         button_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SurveyActivity) mContext).go_to_next();
+                ((SurveyActivity) mContext).go_to_next(null);
             }
         });
 
@@ -59,13 +62,14 @@ public class FragmentCheckboxes extends Fragment {
         for (CheckBox cb : allCb) {
             if (cb.isChecked()) {
                 at_leaset_one_checked = true;
-                the_choices = the_choices + cb.getText().toString() + ", ";
+                the_choices = the_choices + cb.getTag() + ",";
             }
         }
 
         if (the_choices.length() > 2) {
-            the_choices = the_choices.substring(0, the_choices.length() - 2);
-            Answers.getInstance().put_answer(textview_q_title.getText().toString(), the_choices);
+            the_choices = the_choices.substring(0, the_choices.length() - 1);
+            Answers.getInstance().put_answer(q_data.getId(), the_choices);
+            Log.i("Choices", the_choices);
         }
 
 
@@ -93,16 +97,27 @@ public class FragmentCheckboxes extends Fragment {
             button_continue.setVisibility(View.GONE);
         }
 
-        List<String> qq_data = q_data.getChoices();
+        List<Choice> qq_data = q_data.getChoices();
         if (q_data.getRandomChoices()) {
             Collections.shuffle(qq_data);
         }
 
-        for (String choice : qq_data) {
+        String answer = Answers.getInstance().get_answer(q_data.getId(), "");
+        Log.i("Answer", answer);
+        List<String> answerList = Arrays.asList(answer.split(","));
+
+        allCb.clear();
+        for (Choice choice : qq_data) {
             CheckBox cb = new CheckBox(mContext);
-            cb.setText(Html.fromHtml(choice));
+            cb.setText(Html.fromHtml(choice.getValue() == null ? "" : choice.getValue()));
             cb.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
             cb.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            cb.setTag(choice.getId());
+            if(answerList.contains(choice.getId())){
+                cb.setChecked(true);
+            }else{
+                cb.setChecked(false);
+            }
             linearLayout_checkboxes.addView(cb);
             allCb.add(cb);
 

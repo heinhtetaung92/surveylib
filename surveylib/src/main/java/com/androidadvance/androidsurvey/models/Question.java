@@ -10,6 +10,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Question implements Serializable {
 
+    @SerializedName("id")
+    @Expose
+    private String id;
     @SerializedName("question_type")
     @Expose
     private String questionType;
@@ -27,7 +30,7 @@ public class Question implements Serializable {
     private Boolean randomChoices;
     @SerializedName("choices")
     @Expose
-    private List<String> choices = new ArrayList<String>();
+    private List<Choice> choices = new ArrayList<Choice>();
     @SerializedName("min")
     @Expose
     private Integer min;
@@ -37,6 +40,14 @@ public class Question implements Serializable {
     @SerializedName("number_of_lines")
     @Expose
     private Integer numberOfLines;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      *
@@ -133,7 +144,7 @@ public class Question implements Serializable {
      * @return
      * The choices
      */
-    public List<String> getChoices() {
+    public List<Choice> getChoices() {
         return choices;
     }
 
@@ -142,7 +153,7 @@ public class Question implements Serializable {
      * @param choices
      * The choices
      */
-    public void setChoices(List<String> choices) {
+    public void setChoices(List<Choice> choices) {
         this.choices = choices;
     }
 
