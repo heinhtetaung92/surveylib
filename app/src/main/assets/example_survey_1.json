@@ -56,7 +56,7 @@
     },
     {
       "id": "3",
-      "question_type": "Time",
+      "question_type": "Date",
       "question_title": "Why did you not subscribe at the end of your free trial ?",
       "description": "",
       "required": false
