@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 public class Answers {
     private volatile static Answers uniqueInstance;
     private final LinkedHashMap<String, String> answered_hashmap = new LinkedHashMap<>();
+    private final LinkedHashMap<String, String> answered_value_hashmap = new LinkedHashMap<>();
 
 
     private Answers() {
@@ -19,8 +20,20 @@ public class Answers {
         answered_hashmap.put(key, value);
     }
 
+    public void clear_answer(String key){
+        answered_hashmap.remove(key);
+    }
+
     public String get_answer(String key, String defVal){
         return answered_hashmap.get(key) == null ? defVal : answered_hashmap.get(key);
+    }
+
+    public void put_value_answer(String key, String value){
+        answered_value_hashmap.put(key, value);
+    }
+
+    public String get_value_answer(String key, String defVal){
+        return answered_value_hashmap.get(key) == null ? defVal : answered_value_hashmap.get(key);
     }
 
     public String get_json_object() {

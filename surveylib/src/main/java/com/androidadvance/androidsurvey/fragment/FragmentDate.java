@@ -102,7 +102,6 @@ public class FragmentDate extends Fragment implements DatePickerDialog.OnDateSet
         textview_q_title.setText(Html.fromHtml(q_data.getQuestionTitle()));
         editText_answer.setText(answer);
 
-
     }
 
     private void showDatePickerDialog()

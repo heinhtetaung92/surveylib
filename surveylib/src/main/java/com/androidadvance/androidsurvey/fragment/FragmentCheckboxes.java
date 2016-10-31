@@ -3,7 +3,9 @@ package com.androidadvance.androidsurvey.fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,6 +35,7 @@ public class FragmentCheckboxes extends Fragment {
     private FragmentActivity mContext;
     private Button button_continue;
     private TextView textview_q_title;
+    private EditText txt_new_suggestion;
     private LinearLayout linearLayout_checkboxes;
     private final ArrayList<CheckBox> allCb = new ArrayList<>();
 
@@ -43,6 +47,7 @@ public class FragmentCheckboxes extends Fragment {
 
         button_continue = (Button) rootView.findViewById(R.id.button_continue);
         textview_q_title = (TextView) rootView.findViewById(R.id.textview_q_title);
+        txt_new_suggestion = (EditText) rootView.findViewById(R.id.new_suggestion);
         linearLayout_checkboxes = (LinearLayout) rootView.findViewById(R.id.linearLayout_checkboxes);
         button_continue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +75,8 @@ public class FragmentCheckboxes extends Fragment {
             the_choices = the_choices.substring(0, the_choices.length() - 1);
             Answers.getInstance().put_answer(q_data.getId(), the_choices);
             Log.i("Choices", the_choices);
+        }else{
+            Answers.getInstance().put_answer(q_data.getId(), the_choices);
         }
 
 
@@ -107,7 +114,7 @@ public class FragmentCheckboxes extends Fragment {
         List<String> answerList = Arrays.asList(answer.split(","));
 
         allCb.clear();
-        for (Choice choice : qq_data) {
+        for (final Choice choice : qq_data) {
             CheckBox cb = new CheckBox(mContext);
             cb.setText(Html.fromHtml(choice.getValue() == null ? "" : choice.getValue()));
             cb.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
@@ -120,15 +127,57 @@ public class FragmentCheckboxes extends Fragment {
             }
             linearLayout_checkboxes.addView(cb);
             allCb.add(cb);
+            if(choice.allowNewSuggestion()) {
+                if (cb.isChecked()) {
+                    //show input box
+                    txt_new_suggestion.setVisibility(View.VISIBLE);
+                    String new_suggestion = Answers.getInstance().get_answer(q_data.getId()+"_"+choice.getId(), "");
+                    txt_new_suggestion.setText(new_suggestion);
+                } else {
+                    txt_new_suggestion.setVisibility(View.GONE);
+                }
 
+                txt_new_suggestion.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        Answers.getInstance().put_answer(q_data.getId()+"_"+choice.getId(), editable.toString());
+                    }
+                });
+
+            }else{
+                txt_new_suggestion.setVisibility(View.GONE);
+            }
 
             cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if(choice.allowNewSuggestion()) {
+                        if (isChecked) {
+                            //show input box
+                            txt_new_suggestion.setVisibility(View.VISIBLE);
+                        } else {
+                            txt_new_suggestion.setVisibility(View.GONE);
+                            //Answers.getInstance().clear_answer(q_data+"_"+choice.getId());
+                        }
+                    }
+
                     collect_data();
                 }
             });
         }
+
+
 
     }
 
