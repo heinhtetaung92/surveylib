@@ -11,12 +11,16 @@ import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.androidadvance.androidsurvey.fragment.FragmentCheckboxes;
+import com.androidadvance.androidsurvey.fragment.FragmentDate;
 import com.androidadvance.androidsurvey.fragment.FragmentEnd;
+import com.androidadvance.androidsurvey.fragment.FragmentLinearScale;
+import com.androidadvance.androidsurvey.fragment.FragmentMultiRadioGroup;
 import com.androidadvance.androidsurvey.fragment.FragmentMultiline;
 import com.androidadvance.androidsurvey.fragment.FragmentNumber;
 import com.androidadvance.androidsurvey.fragment.FragmentRadioboxes;
 import com.androidadvance.androidsurvey.fragment.FragmentStart;
 import com.androidadvance.androidsurvey.fragment.FragmentTextSimple;
+import com.androidadvance.androidsurvey.fragment.FragmentTime;
 import com.androidadvance.androidsurvey.models.Question;
 import com.androidadvance.androidsurvey.models.SurveyPojo;
 import com.google.gson.Gson;
@@ -95,8 +99,35 @@ public class SurveyActivity extends AppCompatActivity {
                 arraylist_fragments.add(frag);
             }
 
+            if (mQuestion.getQuestionType().equals("LinearScale")) {
+                FragmentLinearScale frag = new FragmentLinearScale();
+                Bundle xBundle = new Bundle();
+                xBundle.putSerializable("data", mQuestion);
+                xBundle.putString("style", style_string);
+                frag.setArguments(xBundle);
+                arraylist_fragments.add(frag);
+            }
+
             if (mQuestion.getQuestionType().equals("Number")) {
                 FragmentNumber frag = new FragmentNumber();
+                Bundle xBundle = new Bundle();
+                xBundle.putSerializable("data", mQuestion);
+                xBundle.putString("style", style_string);
+                frag.setArguments(xBundle);
+                arraylist_fragments.add(frag);
+            }
+
+            if (mQuestion.getQuestionType().equals("Date")) {
+                FragmentDate frag = new FragmentDate();
+                Bundle xBundle = new Bundle();
+                xBundle.putSerializable("data", mQuestion);
+                xBundle.putString("style", style_string);
+                frag.setArguments(xBundle);
+                arraylist_fragments.add(frag);
+            }
+
+            if (mQuestion.getQuestionType().equals("Time")) {
+                FragmentTime frag = new FragmentTime();
                 Bundle xBundle = new Bundle();
                 xBundle.putSerializable("data", mQuestion);
                 xBundle.putString("style", style_string);
@@ -110,6 +141,15 @@ public class SurveyActivity extends AppCompatActivity {
                 xBundle.putSerializable("data", mQuestion);
                 xBundle.putString("style", style_string);
                 frag.setArguments(xBundle);
+                arraylist_fragments.add(frag);
+            }
+            if (mQuestion.getQuestionType().equals("MultiRadioQuestion")) {
+                FragmentMultiRadioGroup frag = FragmentMultiRadioGroup.getInstance();
+                Bundle xBundle = new Bundle();
+                xBundle.putSerializable("data", mQuestion);
+                xBundle.putString("style", style_string);
+                frag.setArguments(xBundle);
+
                 arraylist_fragments.add(frag);
             }
 
@@ -143,6 +183,8 @@ public class SurveyActivity extends AppCompatActivity {
 
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
+        Log.i("Fragment List Size", arraylist_fragments.size()+"");
+        Log.i("Fragment index", index+"");
 
         fragTransaction.replace(R.id.container, arraylist_fragments.get(index) , "fragment" + index);
         fragTransaction.commit();
@@ -158,12 +200,22 @@ public class SurveyActivity extends AppCompatActivity {
             //mPager.setCurrentItem(mPager.getCurrentItem() + 1);
         }else{
             List<Question> questions = mSurveyPojo.getQuestions();
-            int currentPos = fragIndex;
-            for(;currentPos<questions.size();currentPos++){
-                Question question = questions.get(currentPos);
+            int questionPos = fragIndex;
+            if(!mSurveyPojo.getSurveyProperties().getSkipIntro()){
+                questionPos --;
+            }
+            for(;questionPos<questions.size();questionPos++){
+                Question question = questions.get(questionPos);
                 if(question.getId().equals(nextObjId)){
-                    skipMap.put(nextObjId, currentPos - fragIndex);
-                    setFragmentToView(currentPos);
+
+                    if(!mSurveyPojo.getSurveyProperties().getSkipIntro()){
+                        skipMap.put(nextObjId, questionPos - fragIndex + 1);
+                        setFragmentToView(questionPos+1);//+1 for intro frag
+                    }else{
+                        skipMap.put(nextObjId, questionPos - fragIndex);
+                        setFragmentToView(questionPos);
+                    }
+
                     break;
                 }
 
@@ -178,12 +230,24 @@ public class SurveyActivity extends AppCompatActivity {
             super.onBackPressed();
         } else {
             List<Question> questions = mSurveyPojo.getQuestions();
-            Question currQuestion = questions.get(fragIndex);
+
+            String questionId;
+            try {
+                if (!mSurveyPojo.getSurveyProperties().getSkipIntro()) {//check there is intro fragemnt or not
+                    Question currQuestion = questions.get(fragIndex - 1);
+                    questionId = currQuestion.getId();
+                } else {
+                    Question currQuestion = questions.get(fragIndex);
+                    questionId = currQuestion.getId();
+                }
+            }catch (Exception ex){
+                questionId = "-1";
+            }
 
             try {
-                int skipCount = skipMap.get(currQuestion.getId());
+                int skipCount = skipMap.get(questionId);
                 Log.i("SkipCount", skipCount + "");
-                skipMap.remove(currQuestion.getId());
+                skipMap.remove(questionId);
                 setFragmentToView(fragIndex - skipCount);
             }catch (Exception ex){
                 Log.i("SkipCount", "0");

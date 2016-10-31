@@ -34,7 +34,15 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:id="@+id/linearLayout_checkboxes"></LinearLayout>
+                android:id="@+id/linearLayout_checkboxes"/>
+
+            <EditText
+                android:id="@+id/new_suggestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@drawable/textinputborder"
+                android:lines="3"/>
 
         </LinearLayout>
 

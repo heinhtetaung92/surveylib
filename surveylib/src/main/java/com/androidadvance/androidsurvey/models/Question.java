@@ -40,6 +40,29 @@ public class Question implements Serializable {
     @SerializedName("number_of_lines")
     @Expose
     private Integer numberOfLines;
+    @SerializedName("columns")
+    @Expose
+    private ArrayList<String> columns;
+
+    public ArrayList<String> getRows() {
+        return rows;
+    }
+
+    public void setRows(ArrayList<String> rows) {
+        this.rows = rows;
+    }
+
+    public ArrayList<String> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(ArrayList<String> columns) {
+        this.columns = columns;
+    }
+
+    @SerializedName("rows")
+    @Expose
+    private ArrayList<String> rows;
 
     public String getId() {
         return id;

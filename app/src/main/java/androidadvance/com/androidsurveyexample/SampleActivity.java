@@ -123,7 +123,7 @@ public class SampleActivity extends AppCompatActivity {
             rb.setBottom(android.R.drawable.btn_radio);
             rb.setButtonDrawable(null);
             RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-rb.setLayoutParams(params);
+            rb.setLayoutParams(params);
             radioGroup.addView(rb);
 
         }
@@ -169,12 +169,12 @@ rb.setLayoutParams(params);
 
         Space space = new Space(this);
 
-        space.setLayoutParams(new ViewGroup.LayoutParams(FIRSTCOLUMNWIDTH, ViewGroup.LayoutParams.WRAP_CONTENT));
+        space.setLayoutParams(new ViewGroup.LayoutParams(FIRSTCOLUMNWIDTH, ViewGroup.LayoutParams.MATCH_PARENT));
         rowlayout.addView(space); //add column for the first view
         for (int i = 0; i < columnList.size(); i++) {
             TextView columnText = new TextView(this);
             columnText.setText(columnList.get(i));
-            columnText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            columnText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
             rowlayout.addView(columnText);
 
         }
