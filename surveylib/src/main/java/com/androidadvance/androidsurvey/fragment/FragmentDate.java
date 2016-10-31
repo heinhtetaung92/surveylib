@@ -101,12 +101,6 @@ public class FragmentDate extends Fragment implements DatePickerDialog.OnDateSet
         });
         textview_q_title.setText(Html.fromHtml(q_data.getQuestionTitle()));
         editText_answer.setText(answer);
-<<<<<<< HEAD
-=======
-        //InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
-        //imm.showSoftInput(editText_answer, 0);
-
->>>>>>> 5f2db1cadfa341720618c6604b4b27ea90e4dc9e
 
     }
 
