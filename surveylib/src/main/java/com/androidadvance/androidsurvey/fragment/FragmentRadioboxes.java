@@ -42,6 +42,7 @@ public class FragmentRadioboxes extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_radioboxes, container, false);
 
+
         button_continue = (Button) rootView.findViewById(R.id.button_continue);
         textview_q_title = (TextView) rootView.findViewById(R.id.textview_q_title);
         radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup);
