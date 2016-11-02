@@ -1,7 +1,9 @@
 package androidadvance.com.androidsurveyexample;
 
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.Space;
@@ -116,12 +118,15 @@ public class SampleActivity extends AppCompatActivity {
             int[] attrs = { android.R.attr.listChoiceIndicatorSingle };
 
             RadioButton rb = new RadioButton(this);
-            rb.setGravity(Gravity.CENTER);
+
             TypedArray ta = this.getTheme().obtainStyledAttributes(attrs);
             Drawable indicator = ta.getDrawable(0);
             rb.setCompoundDrawablesWithIntrinsicBounds(null, null, null, indicator);//?android:attr/listChoiceIndicatorSingle
+
+
             rb.setBottom(android.R.drawable.btn_radio);
             rb.setButtonDrawable(null);
+            rb.setGravity(Gravity.CENTER_VERTICAL);
             RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             rb.setLayoutParams(params);
             radioGroup.addView(rb);

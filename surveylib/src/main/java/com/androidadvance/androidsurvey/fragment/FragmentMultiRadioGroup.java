@@ -2,26 +2,26 @@ package com.androidadvance.androidsurvey.fragment;
 
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.Space;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidadvance.androidsurvey.Answers;
 import com.androidadvance.androidsurvey.R;
+import com.androidadvance.androidsurvey.customRadioGroup;
 import com.androidadvance.androidsurvey.models.Question;
 
 import java.util.ArrayList;
@@ -32,19 +32,22 @@ import static android.content.ContentValues.TAG;
  * Created by kaungkhantthu on 10/31/16.
  */
 
-public class FragmentMultiRadioGroup extends Fragment {
+public class FragmentMultiRadioGroup extends Fragment implements customRadioGroup.OnCheckedChangeListener {
 
     private static final int FIRSTCOLUMNWIDTH = 80;
     private static FragmentMultiRadioGroup multiRadioFragment;
     private LinearLayout mainLayout;
     private int numberOFradioGroup;
     private int numberOFradioButton;
-    private int DEFAULTPADDING = 10;
-    private int heighestWidth = 180;
+    private int DEFAULTPADDING = 20;
+    private int heighestWidth = 240;
     private Question q_data;
+    public SparseArray<String> answerlist = new SparseArray<>();
+    public SparseArray<String> mainAnswerlist = new SparseArray<>();
     private FragmentActivity mContext;
     private TextView txt_question;
-    private FrameLayout frameLayout;
+    private LinearLayout linearFirstRow;
+    private boolean isAnswersareAdded; //this boolean is use to handle the state of the on check change lisnter
 
     // private int NORMALCOLUMNWIDTH = 150;
     private FragmentMultiRadioGroup() {
@@ -63,16 +66,18 @@ public class FragmentMultiRadioGroup extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_multiradiogroup, container, false);
         mContext = getActivity();
-
+        isAnswersareAdded = false;
         q_data = (Question) getArguments().getSerializable("data");
+        mainAnswerlist = Answers.getInstance().get_answer(q_data.getId(), new SparseArray<String>());
         numberOFradioGroup = q_data.getRows().size();
         txt_question = (TextView) v.findViewById(R.id.textview_q_title);
         txt_question.setText(q_data.getQuestionTitle());
         mainLayout = (LinearLayout) v.findViewById(R.id.mainLinearLayout);
-        frameLayout = (FrameLayout) v.findViewById(R.id.frame_firstRow);
+        linearFirstRow = (LinearLayout) v.findViewById(R.id.linear_firstRow);
+
 
         LinearLayout firstRow = generateFirstRow(q_data.getColumns());
-        frameLayout.addView(firstRow);
+        linearFirstRow.addView(firstRow);
         for (int i = 0; i < numberOFradioGroup; i++) {
             LinearLayout rowLayout = generateRow(q_data.getRows().get(i), i);
 
@@ -88,36 +93,30 @@ public class FragmentMultiRadioGroup extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
-        findChildViewAndApplyHighestwidth(mainLayout);
-        findChildViewAndApplyHighestwidth(frameLayout);
-        Drawable d = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            d = mContext.getDrawable(R.drawable.textinputborder);
-        } else {
-            d = mContext.getResources().getDrawable(R.drawable.textinputborder);
+        findChildViewAndApplyHighestwidth(mainLayout);      //for the whole table
+        findChildViewAndApplyHighestwidth(linearFirstRow);  //for the first row
+        if (mainAnswerlist.size() > 0) {
+            checkAnswer();
 
         }
 
-        applyDrawableBackGroundToAllView(mainLayout);
-        applyDrawableBackGroundToAllView(frameLayout);
+        //refillanswer(mainLayout);
+        isAnswersareAdded = true;
+
+
         Log.e(TAG, "onViewCreated: ");
 
     }
 
-    private void applyDrawableBackGroundToAllView(ViewGroup vg) {
-        for (int i = 0; i < vg.getChildCount(); i++) {
-            if (vg.getChildAt(i) instanceof ViewGroup) {
-                ViewGroup viewGroup = (ViewGroup) vg.getChildAt(i);
-                applyDrawableBackGroundToAllView(viewGroup);
-            } else {
-                final View v = vg.getChildAt(i);
-                if (v instanceof TextView) {
 
-                    v.setBackgroundResource(R.drawable.textinputborder);
+    private void checkAnswer() {
+        for (int i = 0; i < mainAnswerlist.size(); i++) {
+            int rowTag = mainAnswerlist.keyAt(i);
+            customRadioGroup group = (customRadioGroup) mainLayout.findViewWithTag(rowTag + "");
+            String answertag = mainAnswerlist.get(rowTag);
+            RadioButton rbtn = (RadioButton) group.findViewWithTag(answertag);
+            rbtn.setChecked(true);
 
-
-                }
-            }
         }
     }
 
@@ -132,46 +131,40 @@ public class FragmentMultiRadioGroup extends Fragment {
                 final int applywidth = this.heighestWidth;
                 ViewGroup.LayoutParams param = v.getLayoutParams();
                 param.width = applywidth;
-
                 v.setLayoutParams(param);
             }
         }
     }
 
-    private void findChildViewgetHighestWidth(ViewGroup vg) {
-        for (int i = 0; i < vg.getChildCount(); i++) {
-            if (vg.getChildAt(i) instanceof ViewGroup) {
-                ViewGroup viewGroup = (ViewGroup) vg.getChildAt(i);
-                findChildViewgetHighestWidth(viewGroup);
-            } else {
-                View v = vg.getChildAt(i);
-                int viewwidth = v.getWidth();
 
-                this.heighestWidth = (this.heighestWidth > viewwidth) ? this.heighestWidth : viewwidth;
-            }
-        }
-    }
-
-    private RadioGroup generateRadioGroup(int numberOfRadioButton, int currentIndex) {
-        RadioGroup radioGroup = new RadioGroup(getContext());
+    private customRadioGroup generateCustomRadioGroup(int numberOfRadioButton, int columnindex) {
+        customRadioGroup radioGroup = new customRadioGroup(getContext());
         radioGroup.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         radioGroup.setOrientation(RadioGroup.HORIZONTAL);
 
-        radioGroup.setTag("" + currentIndex);
+        radioGroup.setTag("" + columnindex);
         for (int i = 0; i < numberOfRadioButton; i++) {
             int[] attrs = {android.R.attr.listChoiceIndicatorSingle};
+            LinearLayout wrapLayout = new LinearLayout(getContext());
 
+            wrapLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            wrapLayout.setBackgroundResource(R.drawable.textinputborder);
+            wrapLayout.setGravity(Gravity.CENTER);
             RadioButton rb = new RadioButton(getContext());
             TypedArray ta = getContext().getTheme().obtainStyledAttributes(attrs);
             Drawable indicator = ta.getDrawable(0);
-            rb.setGravity(Gravity.CENTER);
+
             rb.setCompoundDrawablesWithIntrinsicBounds(null, null, null, indicator);//?android:attr/listChoiceIndicatorSingle
             rb.setBottom(android.R.drawable.btn_radio);
             rb.setButtonDrawable(null);
-            RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            rb.setLayoutParams(params);
+            rb.setTag(columnindex + "" + i);
+            LinearLayout.LayoutParams params = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-            radioGroup.addView(rb);
+            rb.setLayoutParams(params);
+            rb.setGravity(Gravity.CENTER);
+            wrapLayout.addView(rb);
+
+            radioGroup.addView(wrapLayout);
 
         }
 
@@ -189,23 +182,14 @@ public class FragmentMultiRadioGroup extends Fragment {
         rowText.setPadding(DEFAULTPADDING, DEFAULTPADDING, DEFAULTPADDING, DEFAULTPADDING);
         rowText.setGravity(Gravity.CENTER);
         rowText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        rowText.setBackgroundResource(R.drawable.textinputborder);
         rowlayout.addView(rowText);
 
 
-        RadioGroup radioGroup = generateRadioGroup(numberOFradioButton, currentIndex);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.e("onCheckedChanged: ", group.getTag() + "" + checkedId + "");
-                for (int i = 0; i < group.getChildCount(); i++) {
-                    if (group.getChildAt(i).getId() == checkedId) {
-                        Toast.makeText(getActivity(), q_data.getColumns().get(i), Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                }
+        customRadioGroup radioGroup = generateCustomRadioGroup(numberOFradioButton, currentIndex);
+        radioGroup.setOnCheckedChangeListener(this);
 
-            }
-        });
+
         rowlayout.addView(radioGroup);
 
 
@@ -227,7 +211,7 @@ public class FragmentMultiRadioGroup extends Fragment {
             TextView columnText = new TextView(getContext());
             columnText.setText(columnList.get(i));
             columnText.setPadding(DEFAULTPADDING, DEFAULTPADDING, DEFAULTPADDING, DEFAULTPADDING);
-
+            columnText.setBackgroundResource(R.drawable.textinputborder);
             columnText.setGravity(Gravity.CENTER);
             columnText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
             rowlayout.addView(columnText);
@@ -242,6 +226,28 @@ public class FragmentMultiRadioGroup extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
+    }
+
+    @Override
+    public void onCheckedChanged(customRadioGroup group, int checkedId) {
+        Log.e("onCheckedChanged: ", group.getTag() + "" + checkedId + "");
+        for (int i = 0; i < group.getChildCount(); i++) {
+            if (group.getChildAt(i) instanceof LinearLayout) {
+                LinearLayout wrapLayout = (LinearLayout) group.getChildAt(i);
+
+                if (wrapLayout.getChildAt(0).getId() == checkedId) {
+                    if (isAnswersareAdded) {
+                        String answerKey = (String) ((RadioButton) wrapLayout.getChildAt(0)).getTag();
+                        int column = Integer.parseInt("" + group.getTag());
+                        answerlist.put(column, answerKey);
+                        Answers.getInstance().put_answer(q_data.getId(), answerlist);
+
+                        break;
+                    }
+                }
+            }
+        }
 
     }
 }
